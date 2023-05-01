@@ -14,14 +14,14 @@ class DetailsPage extends StatelessWidget {
         title: const Text('Attendance Record App (Details Page)'),
       ),
       body: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('User: ${attendance.user}'),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text('Phone: ${attendance.phone}'),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text('Check-in Time: ${attendance.checkIn.toString()}'),
           ],
         ),

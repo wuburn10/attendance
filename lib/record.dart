@@ -27,7 +27,7 @@ class RecordAttendance extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   user,
                   style: const TextStyle(fontSize: 15),
@@ -38,7 +38,7 @@ class RecordAttendance extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   phone,
                   style: const TextStyle(fontSize: 15),
@@ -49,7 +49,7 @@ class RecordAttendance extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   DateFormat('yyyy-MM-dd HH:mm:ss').format(checkIn),
                   style: const TextStyle(fontSize: 15),
