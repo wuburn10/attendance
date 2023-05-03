@@ -11,7 +11,20 @@ class RecordAttendance extends StatelessWidget {
     required this.phone,
     required this.checkIn,
   });
- 
+
+  String _getTimeDifference() {
+    final Duration timeDiff = DateTime.now().difference(checkIn);
+    if (timeDiff.inHours < 1) {
+      if (timeDiff.inMinutes == 0){
+        return '< 1 minute ago';
+      }
+      return '${timeDiff.inMinutes} minute ago';
+    }else if(timeDiff.inHours > 100){
+      return '> 100 hours ago';
+    }
+    return '${timeDiff.inHours} hours ago';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -51,7 +64,7 @@ class RecordAttendance extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  DateFormat('yyyy-MM-dd HH:mm:ss').format(checkIn),
+                  _getTimeDifference(),
                   style: const TextStyle(fontSize: 15),
                   overflow: TextOverflow.ellipsis,
                 ),

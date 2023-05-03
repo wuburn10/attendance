@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
     RecordAttendance(
         user: "Chan Saw Lin",
         phone: "0152131113",
-        checkIn: DateTime.parse("2020-06-30 16:10:05")),
+        checkIn: DateTime.parse("2023-05-04 16:10:05")),
     RecordAttendance(
         user: "Lee Saw Loy",
         phone: "0161231346",
@@ -101,10 +101,20 @@ class _HomePageState extends State<HomePage> {
   ];
 
   List<RecordAttendance> searchAttendanceList = [];
+
+
+  final List<bool> _selections = <bool>[true, false];
+
+  bool _selectionsTimeAgo = true;
+
+  List<bool> getSelections(){
+    return _selections;
+  }
+
   @override
   void initState() {
-    searchAttendanceList = attendanceList;
     super.initState();
+    searchAttendanceList = attendanceList;
   }
 
   // Filter for search bar
@@ -124,13 +134,57 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  int _selectedIndex = 1;
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
 
-  void _navigateBottomBar(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // Open Add Record Dialog
+  Future openDialog() => showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+            title: Text('Add New Record'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('User'),
+                ),
+                TextField(
+                  controller: nameController,
+                  autofocus: true,
+                  decoration: InputDecoration(hintText: "Enter your name"),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Phone'),
+                ),
+                TextField(
+                  controller: phoneController,
+                  autofocus: true,
+                  decoration:
+                      InputDecoration(hintText: "Enter your phone number"),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                child: Text("Submit"),
+                onPressed: () {
+                  final name = nameController.text;
+                  final phone = phoneController.text;
+                  final record = RecordAttendance(
+                      user: name, phone: phone, checkIn: DateTime.now());
+                  setState(() {
+                    attendanceList.add(record);
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ));
 
   @override
   Widget build(BuildContext context) {
@@ -146,12 +200,17 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          TextField(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextField(
               onChanged: (value) => _runFilter(value),
               decoration: InputDecoration(
                 suffixIcon: const Icon(Icons.search),
                 labelText: 'User',
-              )),
+                hintText: "Enter User's Name",
+              ),
+            ),
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -160,7 +219,7 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(color: const Color(0xFF6A8A99)),
-                color: Color(0xFF6A8A99),
+                color: const Color(0xFF6A8A99),
               ),
               child: Row(
                 children: [
@@ -175,10 +234,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  Expanded(
+                  const Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
+                      padding: EdgeInsets.only(left: 8.0),
                       child: Text(
                         'Phone',
                         style: TextStyle(
@@ -188,13 +247,34 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Expanded(
                     flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        'Check In',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
+                    child: Row(
+                      children: [
+                        ToggleButtons(
+                          isSelected: _selections,
+                          fillColor: Colors.blue[50],
+                          selectedColor: const Color(0xFF6A8A99),
+                          onPressed: (int index) {
+                            setState(() {
+                              _selections[index] = !_selections[index];
+                              if (index == 1){ // dd MM yy
+                                _selectionsTimeAgo = false;
+                                _selections[0] = false;
+                                _selections[1] = true;
+                                print(_selectionsTimeAgo);
+                              }else{ // time Ago
+                                _selectionsTimeAgo = true;
+                                _selections[1] = false;
+                                _selections[0] = true;
+                                print(_selectionsTimeAgo);
+                              }
+                            });
+                          },
+                          children: const [
+                            Icon(Icons.access_time),
+                            Icon(Icons.calendar_month),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -203,7 +283,6 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: Container(
-              color: Colors.grey[300],
               child: ListView.builder(
                 itemCount: searchAttendanceList.length,
                 itemBuilder: (context, index) {
@@ -228,17 +307,22 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+          const SizedBox(
+            height: 70,
+          ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          type: BottomNavigationBarType.fixed,
-          onTap: _navigateBottomBar,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add"),
-          ]),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 5.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            openDialog();
+          },
+          backgroundColor: const Color(0xFFDB823F),
+          child: const Icon(Icons.add),
+        ),
+      ),
     );
   }
 }
