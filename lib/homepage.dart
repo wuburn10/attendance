@@ -1,7 +1,7 @@
 import 'package:attendance/record.dart';
 import 'package:attendance/detailspage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,103 +11,36 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<RecordAttendance> attendanceList = [
     RecordAttendance(
-        user: "Chan Saw Lin",
-        phone: "0152131113",
-        checkIn: DateTime.parse("2023-05-04 16:10:05")),
+        "Chan Saw Lin", "0152131113", DateTime.parse("2020-06-30 16:10:05")),
     RecordAttendance(
-        user: "Lee Saw Loy",
-        phone: "0161231346",
-        checkIn: DateTime.parse("2020-07-11 15:39:59")),
+        "Lee Saw Loy", "0161231346", DateTime.parse("2020-07-11 15:39:59")),
     RecordAttendance(
-        user: "Khaw Tong Lin",
-        phone: "0158398109",
-        checkIn: DateTime.parse("2020-08-19 11:10:18")),
+        "Khaw Tong Lin", "0158398109", DateTime.parse("2020-08-19 11:10:18")),
     RecordAttendance(
-        user: "Lim Kok Lin",
-        phone: "0168279101",
-        checkIn: DateTime.parse("2020-08-19 11:11:35")),
+        "Lim Kok Lin", "0168279101", DateTime.parse("2020-08-19 11:11:35")),
     RecordAttendance(
-        user: "Low Jun Wei",
-        phone: "0112731912",
-        checkIn: DateTime.parse("2020-08-15 13:00:05")),
+        "Low Jun Wei", "0112731912", DateTime.parse("2020-08-15 13:00:05")),
     RecordAttendance(
-        user: "Yong Weng Kai",
-        phone: "0172332743",
-        checkIn: DateTime.parse("2020-07-31 18:10:11")),
+        "Yong Weng Kai", "0172332743", DateTime.parse("2020-07-31 18:10:11")),
     RecordAttendance(
-        user: "Jayden Lee",
-        phone: "0191236439",
-        checkIn: DateTime.parse("2020-08-22 08:10:38")),
+        "Jayden Lee", "0191236439", DateTime.parse("2020-08-22 08:10:38")),
     RecordAttendance(
-        user: "Kong Kah Yan",
-        phone: "0111931233",
-        checkIn: DateTime.parse("2020-07-11 12:00:00")),
+        "Kong Kah Yan", "0111931233", DateTime.parse("2020-07-11 12:00:00")),
     RecordAttendance(
-        user: "Jasmine Lau",
-        phone: "0162879190",
-        checkIn: DateTime.parse("2020-08-01 12:10:05")),
+        "Jasmine Lau", "0162879190", DateTime.parse("2020-08-01 12:10:05")),
     RecordAttendance(
-        user: "Chan Saw Lin",
-        phone: "016783239",
-        checkIn: DateTime.parse("2020-08-23 11:59:05")),
+        "Chan Saw Lin", "016783239", DateTime.parse("2020-08-23 11:59:05")),
     RecordAttendance(
-        user: "Jasmine Lau",
-        phone: "0162879190",
-        checkIn: DateTime.parse("2020-08-01 12:10:05")),
-    RecordAttendance(
-        user: "Chan Saw Lin",
-        phone: "0152131113",
-        checkIn: DateTime.parse("2020-06-30 16:10:05")),
-    RecordAttendance(
-        user: "Lee Saw Loy",
-        phone: "0161231346",
-        checkIn: DateTime.parse("2020-07-11 15:39:59")),
-    RecordAttendance(
-        user: "Khaw Tong Lin",
-        phone: "0158398109",
-        checkIn: DateTime.parse("2020-08-19 11:10:18")),
-    RecordAttendance(
-        user: "Lim Kok Lin",
-        phone: "0168279101",
-        checkIn: DateTime.parse("2020-08-19 11:11:35")),
-    RecordAttendance(
-        user: "Low Jun Wei",
-        phone: "0112731912",
-        checkIn: DateTime.parse("2020-08-15 13:00:05")),
-    RecordAttendance(
-        user: "Yong Weng Kai",
-        phone: "0172332743",
-        checkIn: DateTime.parse("2020-07-31 18:10:11")),
-    RecordAttendance(
-        user: "Jayden Lee",
-        phone: "0191236439",
-        checkIn: DateTime.parse("2020-08-22 08:10:38")),
-    RecordAttendance(
-        user: "Kong Kah Yan",
-        phone: "0111931233",
-        checkIn: DateTime.parse("2020-07-11 12:00:00")),
-    RecordAttendance(
-        user: "Jasmine Lau",
-        phone: "0162879190",
-        checkIn: DateTime.parse("2020-08-01 12:10:05")),
-    RecordAttendance(
-        user: "Chan Saw Lin",
-        phone: "016783239",
-        checkIn: DateTime.parse("2020-08-23 11:59:05")),
-    RecordAttendance(
-        user: "Jasmine Lau",
-        phone: "0162879190",
-        checkIn: DateTime.parse("2020-08-01 12:10:05")),
+        "Jasmine Lau", "0162879190", DateTime.parse("2020-08-01 12:10:05")),
   ];
 
   List<RecordAttendance> searchAttendanceList = [];
-
 
   final List<bool> _selections = <bool>[true, false];
 
   bool _selectionsTimeAgo = true;
 
-  List<bool> getSelections(){
+  List<bool> getSelections() {
     return _selections;
   }
 
@@ -132,6 +65,30 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       searchAttendanceList = results;
     });
+
+    bool timeAgo;
+
+    _loadSelectedTimeAgo() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        timeAgo = prefs.getBool('selectedTimeAgo') ??
+            true; // Default value is true if the value is not stored in SharedPreferences
+      });
+    }
+
+    void _onTimeFormatChanged(bool newValue) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('selectedTimeAgo', newValue);
+      setState(() {
+        timeAgo = newValue;
+      });
+    }
+
+    @override
+    void initState() {
+      super.initState();
+      _loadSelectedTimeAgo();
+    }
   }
 
   final nameController = TextEditingController();
@@ -159,27 +116,37 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Phone'),
+                  child: const Text('Phone'),
                 ),
                 TextField(
                   controller: phoneController,
                   autofocus: true,
-                  decoration:
-                      InputDecoration(hintText: "Enter your phone number"),
+                  decoration: const InputDecoration(
+                      hintText: "Enter your phone number"),
                 ),
               ],
             ),
             actions: [
               TextButton(
-                child: Text("Submit"),
+                child: const Text("Submit"),
                 onPressed: () {
+                  final success = SnackBar(
+                      content: const Text("New record is added!"),
+                      duration: const Duration(seconds: 3),
+                      action: SnackBarAction(
+                          label: "Close",
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          }));
+                  ScaffoldMessenger.of(context).showSnackBar(success);
                   final name = nameController.text;
                   final phone = phoneController.text;
                   final record = RecordAttendance(
-                      user: name, phone: phone, checkIn: DateTime.now());
+                      name, phone, DateTime.now(), _selectionsTimeAgo);
                   setState(() {
                     attendanceList.add(record);
                   });
+
                   Navigator.of(context).pop();
                 },
               ),
@@ -188,12 +155,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    attendanceList.sort(
-        (a, b) => b.checkIn.compareTo(a.checkIn)); // sorting to new -> old
+    attendanceList
+        .sort((a, b) => b.checkIn.compareTo(a.checkIn)); // sorting new -> old
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF486A71),
-        title: Text('Attendance Record App'),
+        title: const Text('Attendance Record App'),
       ),
       body: Column(
         children: [
@@ -204,8 +172,8 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: TextField(
               onChanged: (value) => _runFilter(value),
-              decoration: InputDecoration(
-                suffixIcon: const Icon(Icons.search),
+              decoration: const InputDecoration(
+                suffixIcon: Icon(Icons.search),
                 labelText: 'User',
                 hintText: "Enter User's Name",
               ),
@@ -223,7 +191,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
@@ -256,18 +224,19 @@ class _HomePageState extends State<HomePage> {
                           onPressed: (int index) {
                             setState(() {
                               _selections[index] = !_selections[index];
-                              if (index == 1){ // dd MM yy
+                              if (index == 1) {
+                                // dd MM yy
                                 _selectionsTimeAgo = false;
                                 _selections[0] = false;
                                 _selections[1] = true;
-                                print(_selectionsTimeAgo);
-                              }else{ // time Ago
+                              } else {
+                                // time Ago
                                 _selectionsTimeAgo = true;
                                 _selections[1] = false;
                                 _selections[0] = true;
-                                print(_selectionsTimeAgo);
                               }
                             });
+                            setState(() {});
                           },
                           children: const [
                             Icon(Icons.access_time),
@@ -298,10 +267,10 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                     child: RecordAttendance(
-                      user: searchAttendanceList[index].user,
-                      phone: searchAttendanceList[index].phone,
-                      checkIn: searchAttendanceList[index].checkIn,
-                    ),
+                        searchAttendanceList[index].user,
+                        searchAttendanceList[index].phone,
+                        searchAttendanceList[index].checkIn,
+                        _selectionsTimeAgo),
                   );
                 },
               ),

@@ -2,27 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class RecordAttendance extends StatelessWidget {
-  final String user;
-  final String phone;
-  final DateTime checkIn;
+  String user;
+  String phone;
+  DateTime checkIn;
+  bool timeAgo;
 
-  RecordAttendance({
-    required this.user,
-    required this.phone,
-    required this.checkIn,
-  });
+  RecordAttendance(this.user, this.phone, this.checkIn, [this.timeAgo = true]);
 
   String _getTimeDifference() {
     final Duration timeDiff = DateTime.now().difference(checkIn);
     if (timeDiff.inHours < 1) {
-      if (timeDiff.inMinutes == 0){
+      if (timeDiff.inMinutes == 0) {
         return '< 1 minute ago';
       }
       return '${timeDiff.inMinutes} minute ago';
-    }else if(timeDiff.inHours > 100){
+    } else if (timeDiff.inHours > 100) {
       return '> 100 hours ago';
     }
     return '${timeDiff.inHours} hours ago';
+  }
+
+  String _getDateTime() {
+    return DateFormat("dd MMM yyyy, h:mm a").format(checkIn);
   }
 
   @override
@@ -64,7 +65,7 @@ class RecordAttendance extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  _getTimeDifference(),
+                  timeAgo ? _getTimeDifference() : _getDateTime(),
                   style: const TextStyle(fontSize: 15),
                   overflow: TextOverflow.ellipsis,
                 ),
