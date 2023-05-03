@@ -15,7 +15,7 @@ class RecordAttendance extends StatelessWidget {
       if (timeDiff.inMinutes == 0) {
         return '< 1 minute ago';
       }
-      return '${timeDiff.inMinutes} minute ago';
+      return '${timeDiff.inMinutes} minutes ago';
     } else if (timeDiff.inHours > 100) {
       return '> 100 hours ago';
     }

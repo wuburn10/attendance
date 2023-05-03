@@ -13,6 +13,10 @@ class _HomePageState extends State<HomePage> {
     RecordAttendance(
         "Chan Saw Lin", "0152131113", DateTime.parse("2020-06-30 16:10:05")),
     RecordAttendance(
+        "Abu bin Ali", "0152131113", DateTime.parse("2023-05-03 16:10:05")),
+    RecordAttendance(
+        "Reuben Lee", "0152131113", DateTime.parse("2023-05-04 03:10:05")),
+    RecordAttendance(
         "Lee Saw Loy", "0161231346", DateTime.parse("2020-07-11 15:39:59")),
     RecordAttendance(
         "Khaw Tong Lin", "0158398109", DateTime.parse("2020-08-19 11:10:18")),
